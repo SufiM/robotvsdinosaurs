@@ -1,6 +1,11 @@
 #import serializers
 from rest_framework import serializers
 
+error_response = {
+    "error": "",
+    "error_code": ""
+}    
+
 
 def validate_position(value):
     if value[0] < 0 or value[0] > 9 or value[1] < 0 or value[1] > 9:

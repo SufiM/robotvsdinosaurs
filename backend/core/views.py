@@ -1,13 +1,15 @@
 from django.shortcuts import render
 from rest_framework import generics, status, serializers
 from .serializers import(StartGameSerializer, OutputGameSerializer, OutputGetGameSerializer, 
-                    SetRobotSerializer, OutputSetRobotSerializer, 
-                    SetDinosaursSerializer, OutputSetDinosaurSerializer, MoveActionSerializer)
+                    SetRobotSerializer, SetDinosaursSerializer, MoveActionSerializer)
 from rest_framework.response import Response
 from .models import Game, Board, Robot, Dinosaur
-from .utils import validate_position
+from .utils import validate_position, error_response
 import inspect
 from traceback import format_exc
+from rest_framework.exceptions import ValidationError
+
+error_response = error_response.copy()
 
 def update_board(game: Game, x: int, y: int, object_type:str, prev_location: tuple) -> None:
     try:
@@ -63,18 +65,21 @@ class SetRobot(generics.CreateAPIView):
             board_cells = Board.objects.get(game=game).cells
             robot_position = serializer.validated_data['robot_position']
 
-            if validate_position(value=robot_position):
-                return Response({'error': 'Position is out of range'}, status=status.HTTP_400_BAD_REQUEST)
+            validate_position(value=robot_position)
 
             if board_cells[robot_position[0]][robot_position[1]] == 2:
                 return Response({'error': 'Robot cannot be placed on a dinosaur'}, status=status.HTTP_400_BAD_REQUEST)
-
 
             robot = Robot.objects.create(game=game, x_position=robot_position[0] , y_position=robot_position[1])
             update_board(game=game, x=robot_position[0], y=robot_position[1], object_type="robot", prev_location=None)
             robot.game.status = 1
             robot.game.save()
             return Response(OutputGetGameSerializer(robot.game).data, status=status.HTTP_201_CREATED)
+
+        except ValidationError as e:
+            error_response['error'] = e.detail[0]
+            error_response['error_code'] = e.default_code
+            return Response(error_response , status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             print(f"Unhandled Error: {format_exc()}")

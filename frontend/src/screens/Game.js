@@ -150,15 +150,15 @@ const MainBoard = () => {
   };
 
   const handleRenderCellContent = (i, j, cell) => {
-    if (cell == 3) {
+    if (cell === 3) {
       return '💥';
     } else if (
-      cell == 1 ||
+      cell === 1 ||
       (robotPosition && robotPosition[0] === i && robotPosition[1] === j)
     ) {
       return '🤖';
     } else if (
-      cell == 2 ||
+      cell === 2 ||
       (dinosaurPositions.length > 0 &&
         dinosaurPositions.find(
           (position) => position[0] === i && position[1] === j

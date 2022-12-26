@@ -30,7 +30,7 @@ class SetRobotTest(TestCase):
         
         response = self.client.post('/api/v1/games/initiate-game/1/set-robot', {'robot_position': [11, 11]})
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data['robot_position'], ['Position is out of range'])
+        self.assertEqual(response.data['error_code'], 'invalid')
 
 class SetDinosaursTest(TestCase):
     def test_set_dinosaur(self):
@@ -80,7 +80,7 @@ class SetDinosaursTest(TestCase):
 
         response = self.client.post('/api/v1/games/initiate-game/1/set-dinosaur', {'dinosaurs_positions': [[11, 11], [11, 12]]})
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data , {'dinosaurs_positions': ['Position is out of range']})
+        self.assertEqual(response.data['error_code'] , 'invalid')
 
 class MoveActionTest(TestCase):
     def test_move_action(self):
@@ -89,18 +89,10 @@ class MoveActionTest(TestCase):
         self.assertEqual(response.data['id'], 1)
         
 
-        response = self.client.post('/api/v1/games/initiate-game/1/set-robot', {'robot_position': [1, 1]})
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data['id'], 1)
-        self.assertEqual(response.data['player'], 'test')
-        self.assertEqual(response.data['status'], 1)
-        self.assertEqual(response.data['board'], {
-            'id': 1,
-            'game': 1,
-            'cells': [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
-        } )
+
 
         response = self.client.post('/api/v1/games/initiate-game/1/set-dinosaur', {'dinosaurs_positions': [[2, 1], [2, 2]]})
+        print(response)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['id'], 1)
         self.assertEqual(response.data['player'], 'test')
