@@ -51,6 +51,7 @@ class SetDinosaursTest(TestCase):
         } )
 
         response = self.client.post('/api/v1/games/initiate-game/1/set-dinosaur', {'dinosaurs_positions': [[2, 1], [2, 2]]})
+        print(response.data)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['id'], 1)
         self.assertEqual(response.data['player'], 'test')
@@ -88,8 +89,6 @@ class MoveActionTest(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['id'], 1)
         
-
-
 
         response = self.client.post('/api/v1/games/initiate-game/1/set-dinosaur', {'dinosaurs_positions': [[2, 1], [2, 2]]})
         print(response)

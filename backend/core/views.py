@@ -98,8 +98,7 @@ class SetDinosaur(generics.CreateAPIView):
             dinosaurs_positions = serializer.validated_data['dinosaurs_positions']
 
             for dinosaur_position in dinosaurs_positions:
-                if validate_position(value=dinosaur_position):
-                    return Response({f'error': 'Position in {dinosaur_position} is out of range'}, status=status.HTTP_400_BAD_REQUEST)
+                validate_position(value=dinosaur_position)
 
                 if board_cells[dinosaur_position[0]][dinosaur_position[1]] == 1 or board_cells[dinosaur_position[0]][dinosaur_position[1]] == 2:
                     return Response({'error': 'Dinosaur cannot be placed on a robot or dinosaur'}, status=status.HTTP_400_BAD_REQUEST)
